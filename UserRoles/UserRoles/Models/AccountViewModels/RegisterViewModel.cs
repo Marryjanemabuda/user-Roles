@@ -23,5 +23,19 @@ namespace UserRoles.Models.AccountViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        //
+        // Summary:
+        //     Gets or sets a flag indicating if a user has confirmed their email address.
+        public bool EmailConfirmed { get; set; }
+
+        // Summary:
+        //     Gets or sets a telephone number for the user.
+        public string PhoneNumber { get; set; }
+
+        //
+        // Summary:
+        //     Gets or sets a flag indicating if a user has confirmed their telephone address.
+        public bool PhoneNumberConfirmed { get; set; }
     }
 }
