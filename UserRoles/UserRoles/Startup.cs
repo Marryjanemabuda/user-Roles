@@ -53,6 +53,8 @@ namespace UserRoles
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            InitializeDatabase(app).GetAwaiter().GetResult();
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
@@ -63,6 +65,35 @@ namespace UserRoles
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+                // Seed database code goes here
+                // Add Administrator
+                var isAdministratorExists = await rolesManager.RoleExistsAsync("Administrator");
+                if (!isAdministratorExists)
+                {
+                    var role = new IdentityRole("Administrator");
+                    await rolesManager.CreateAsync(role);
+                    // Add Administrator Here
+                    var user = new ApplicationUser
+                    {
+                        Email = "superadmin@platform.com",
+                        UserName = "superadmin@platform.com",
+                        EmailConfirmed = true
+                    };
+                    var result = await userManager.CreateAsync(user, "Samin@54");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, role.Name);
+                    }
+                }
+            }
         }
     }
 }
